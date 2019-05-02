@@ -55,7 +55,7 @@ class Server:
                 if authorized==True:
                     return {"cube": a,"direction": b}
 
-        return {"move": move()}
+        return {"move": move(),"message":"Coucou"}
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
