@@ -1,5 +1,6 @@
 import cherrypy
 import sys
+import random
 
 class Server:
     @cherrypy.expose
@@ -14,8 +15,47 @@ class Server:
             return ''
         
         body = cherrypy.request.json
-        print(body)
-        return {"move": 1}
+
+    #Informations sur le jeu (déà retirée du dico par facilité)
+        game = body["game"]
+        moi = body["you"]
+        joueurs = body["players"]
+
+
+        def qui_suis_je_pas (): #il ne faut pas jouer les jetons de l'autre... utilisé plus loin
+            if joueurs[0]== moi:
+                return 1
+            return 0
+
+        def check_move (cube, direction):
+            forbidden_moves = {"cube": [6, 7, 8, 11, 12, 13, 16, 17, 18],
+                               "direction": {"N": [0, 1, 2, 3, 4], "S": [20, 21, 22, 23, 24], "E": [4, 9, 14, 19, 24],
+                                             "W": [0, 5, 10, 15, 20]}}
+
+            if cube in forbidden_moves["cube"]:  #vérifier qu'on déplace bien un cube sur les bords
+                return False
+
+            elif game[cube] == qui_suis_je_pas(): #vérifier qu'on déplace bien son cube. Le truc c'est que le joueur
+                #qu'on est on le garde jusqu'à la fin... C'est pas optimisé ici. il refait à chaque tour
+                return False
+
+            elif cube in forbidden_moves["direction"][direction]:
+                return False
+
+            return True
+
+
+        def move():
+            recherche = True
+            while recherche == True:
+                a = random.choice(list(range(25)))
+                b = random.choice(["N", "S", "E", "W"])
+
+                authorized = check_move(a,b)
+                if authorized==True:
+                    return {"cube": a,"direction": b}
+
+        return {"move": move()}
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
