@@ -1,3 +1,32 @@
+import time
+
+now = time.time()
+
+jeu_list = [0, 1, 0, None, None,0, 1, 0, 0, 0, None, 1, 1, None, 0,1, 0, None, None, 1, 0, 1, 1, None, None]
+
+
+def analyse_dico(dictionary): #dictionnaire de type : {"horizontal" : ... , "vertical" ... , "diagonal"
+    analytic_dictionary = dict()
+    liste_result = []
+    for liste in dictionary:
+        liste_principal = (dictionary[liste])
+        for sous_liste in liste_principal:
+            tot = 0
+            for e in sous_liste:
+                if e==0:
+                    tot +=1
+            liste_result.append(tot)
+    maximum = max(liste_result)
+    total = sum(liste_result)
+
+    return {"maximum": maximum,"total": total,"score": total*maximum}
+
+
+
+
+
+
+
 def build_horizontal(liste):
 
     avancement_liste = 0
@@ -35,14 +64,15 @@ def build_vertical(liste):
 def build_diag (game_list):
     return [[game_list[0],game_list[6],game_list[12],game_list[18],game_list[24]],
             [game_list[4],game_list[8],game_list[12],game_list[16],game_list[20]]]
+
 def build_dictionnary(liste_a_convertir):
     dico =  {"vertical": build_vertical(liste_a_convertir), "horizontal": build_horizontal(liste_a_convertir), "diagonale": build_diag(liste_a_convertir)}
-    print(dico["vertical"])
+    print(analyse_dico(dico))
+
 
 def preview (cube, direction):
 
-    jeu_list = list(range(25))
-    build_dictionnary(jeu_list)
+    #jeu_list = list(range(25))
     if direction == "E":
         jeu_list.insert(cube +(4-(cube%5)),jeu_list.pop(cube))
         build_dictionnary(jeu_list)
@@ -59,7 +89,7 @@ def preview (cube, direction):
             jeu_list[cube] = copy_list[5*elements + cube%5]
             jeu_list[5*elements + cube%5] = copy_list[cube]
 
-            build_dictionnary(jeu_list)
+        build_dictionnary(jeu_list)
 
     elif direction == "S":
         elements= 4
@@ -72,5 +102,7 @@ def preview (cube, direction):
         build_dictionnary(jeu_list)
 
 
+now_2 = time.time()
 
-preview(17,"S")
+print(now_2 - now)
+preview(8,"N")
