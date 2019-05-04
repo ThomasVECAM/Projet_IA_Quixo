@@ -13,7 +13,7 @@ class Server:
         cherrypy.response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
         if cherrypy.request.method == "OPTIONS":
             return ''
-        
+
         body = cherrypy.request.json
 
     #Informations sur le jeu (déà retirée du dico par facilité)
@@ -43,7 +43,6 @@ class Server:
                 return False
 
             return True
-
 
         def move():
             recherche = True

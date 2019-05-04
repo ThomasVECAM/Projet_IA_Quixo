@@ -60,7 +60,6 @@ class Server:
                         if e == player:
                             tot += 1
                     liste_result.append(tot)
-            # print(liste_result)
             maximum = max(liste_result)
             total = sum(liste_result)
 
@@ -105,7 +104,6 @@ class Server:
 
         def build_dictionnary(liste_a_convertir, cube, direction):
             dico =  {"vertical": build_vertical(liste_a_convertir), "horizontal": build_horizontal(liste_a_convertir), "diagonale": build_diag(liste_a_convertir),"move":{"cube":cube, "direction":direction}}
-            print(dico['vertical'])
             return analyse_dico(dico)
             #print(liste_a_convertir)
             # print(dico)
@@ -130,7 +128,7 @@ class Server:
                     copy_list = jeu_list.copy()
                     jeu_list[cube] = copy_list[5 * elements + cube % 5]
                     jeu_list[5 * elements + cube % 5] = copy_list[cube]
-                    elements +=(-1)
+                    elements -= 1
             return build_dictionnary(jeu_list, cube, direction)
 
 # ---------------------------
@@ -145,11 +143,13 @@ class Server:
                         dico = preview(game, a, b)
                         # print(dico)
                         if dico['maximum'] > maximum:
+                            maximum = dico['maximum']
                             coup = {"cube": a, "direction": b}
                             score = dico['score']
-                        # elif dico['maximum'] == maximum:
-                            # if dico['score'] > score:
-                                # coup = {"cube": a, "direction": b}
+                        elif dico['maximum'] == maximum:
+                            if dico['score'] > score:
+                                score = dico['score']
+                                coup = {"cube": a, "direction": b}
             return coup
 
         print({"move": move()})
