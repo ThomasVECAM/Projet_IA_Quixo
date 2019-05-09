@@ -31,7 +31,7 @@ class Server:
             player = 1
             adversaire = 0
 
-        def check_move (cube, direction):
+        def check_move(cube, direction):
 
             if game[cube] == adversaire: #vérifier qu'on déplace bien son cube. Le truc c'est que le joueur
                 #qu'on est on le garde jusqu'à la fin... C'est pas optimisé ici. il refait à chaque tour
@@ -128,6 +128,7 @@ class Server:
                     elements -= 1
             return build_dictionnary(jeu_list, cube, direction)
 
+
 # ---------------------------
         message_1 = ""
         def move():
@@ -138,22 +139,17 @@ class Server:
             for element in liste_coup_autorise:
                 a, b = element
                 authorized = check_move(a,b)
-                message_1 = "Pas rentré"
                 if authorized == True:
                     dico = preview(game, a, b)
-                    # print(dico)
-                    cinq_derniers_coups = []
-                    try:
-                        cinq_derniers_coups = [moves[-1],moves[-2],moves[-3],moves[-4],moves[-5]]
-                        #moves[len(moves)-1 : len(moves)+1]
-                        message_1 = "entre dans le try"
-                    except:
-                        message_1 = "Pas assez d'éléments"
+
+                bool_continue = True
+                try:
+                    cinq_derniers_coups = [moves[-1], moves[-2], moves[-3], moves[-4], moves[-5]]
+
                     liste_adversaire = []
                     liste_joueurs = []
                     bool_adversaire = False
                     bool_joueur = False
-
 
                     for dictionnaires in cinq_derniers_coups:
                         if dictionnaires["player"] == adversaire:
@@ -161,13 +157,19 @@ class Server:
                         else:
                             liste_joueurs.append(dictionnaires["move"])
 
+                    liste_joueurs.append({'cube': cube, 'direction': direction})
+
                     bool_adversaire = all(map(lambda x: x == liste_adversaire[0], liste_adversaire))
                     bool_joueur = all(map(lambda x: x == liste_joueurs[0], liste_joueurs))
 
-                    if bool_adversaire == True or bool_joueur == True:
-                        message_1  = "hehehee"
+                    if bool_adversaire == True and bool_joueur == True and dico['maximum_adversaire'] <= 4:
+                        bool_continue = False
+                except:
+                    pass
 
-                    elif dico['maximum_player'] > maximum_player and not (dico['maximum_adversaire'] >= 4):
+                if bool_continue == True:
+
+                    if dico['maximum_player'] > maximum_player and not (dico['maximum_adversaire'] >= 4):
                         maximum_player = dico['maximum_player']
                         maximum_adversaire = dico['maximum_adversaire']
                         coup = {"cube": a, "direction": b}
@@ -175,10 +177,11 @@ class Server:
                     elif dico['maximum_player'] == maximum_player and dico['maximum_adversaire'] < maximum_adversaire:
                         maximum_adversaire = dico['maximum_adversaire']
                         coup = {"cube": a, "direction": b}
+
             return coup
 
         liste_message = ["Salut","Je vais gagner","Ahahahah","LOL","Tu es un bon à rien","Prends ça","Coucouuuuu","Je vais conquérir le monde"]
-        m = {"move":move(),"message": message_1}
+        m = {"move":move()}
         print(m)
         return m
 
