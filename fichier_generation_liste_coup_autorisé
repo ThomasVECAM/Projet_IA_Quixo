@@ -1,0 +1,25 @@
+
+
+
+#pour les coups au nord
+liste = []
+
+forbidden_moves = {"cube": [6, 7, 8, 11, 12, 13, 16, 17, 18],
+                   "direction": {"N": [0, 1, 2, 3, 4], "S": [20, 21, 22, 23, 24], "E": [4, 9, 14, 19, 24],
+                                 "W": [0, 5, 10, 15, 20]}}
+
+for a in range(25):
+    for b in ["N","S","E","W"]:
+        if a not in forbidden_moves["cube"] and a not in forbidden_moves["direction"][b]:
+            tuple = (a,b)
+            liste.append(tuple)
+
+print(len(liste))
+print(liste)
+
+premier = liste[0]
+
+a,b = premier
+
+print(a)
+print(b)
