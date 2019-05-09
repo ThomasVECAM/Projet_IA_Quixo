@@ -2,9 +2,6 @@ import cherrypy
 import sys
 import random
 
-
-#test
-
 class Server:
     @cherrypy.expose
     @cherrypy.tools.json_in()
@@ -23,6 +20,7 @@ class Server:
         game = body["game"]
         moi = body["you"]
         joueurs = body["players"]
+        moves = body['moves']
 
         if joueurs[0] == moi:
             signe = 'X'
@@ -44,8 +42,8 @@ class Server:
 # ---------------------------------
 
         def analyse_dico(dictionary): #dictionnaire de type : {"vertical" : ... , "horizontal" ... , "diagonal"
-            analytic_dictionary = dict()
-            liste_result = []
+            liste_result_player = []
+            liste_result_adversaire = []
             for liste in dictionary:
                 liste_principal = (dictionary[liste])
                 for sous_liste in liste_principal:
@@ -54,11 +52,17 @@ class Server:
                     for e in sous_liste:
                         if e == player:
                             tot_player += 1
-                    liste_result.append(tot_player)
-            maximum = max(liste_result)
-            total = sum(liste_result)
+                        elif e == adversaire:
+                            tot_adversaire += 1
+                    liste_result_player.append(tot_player)
+                    liste_result_adversaire.append(tot_adversaire)
 
-            return {"maximum": maximum,"total": total,"score": total*maximum}
+            maximum_player = max(liste_result_player)
+            maximum_adversaire = max(liste_result_adversaire)
+
+            # total = sum(liste_result)
+
+            return {"maximum_player": maximum_player, "maximum_adversaire": maximum_adversaire}
 
         def build_horizontal(liste):
             avancement_liste = 0
@@ -127,8 +131,8 @@ class Server:
 # ---------------------------
 
         def move():
-            maximum = 0
-            score = 0
+            maximum_player = 0
+            maximum_adversaire = 5
             liste_coup_autorisé = [(0, 'S'), (0, 'E'), (1, 'S'), (1, 'E'), (1, 'W'), (2, 'S'), (2, 'E'), (2, 'W'), (3, 'S'), (3, 'E'), (3, 'W'), (4, 'S'), (4, 'W'), (5, 'N'), (5, 'S'), (5, 'E'), (9, 'N'), (9, 'S'), (9, 'W'), (10, 'N'), (10, 'S'), (10, 'E'), (14, 'N'), (14, 'S'), (14, 'W'), (15, 'N'), (15, 'S'), (15, 'E'), (19, 'N'), (19, 'S'), (19, 'W'), (20, 'N'), (20, 'E'), (21, 'N'), (21, 'E'), (21, 'W'), (22, 'N'), (22, 'E'), (22, 'W'), (23, 'N'), (23, 'E'), (23, 'W'), (24, 'N'), (24, 'W')]
             for element in liste_coup_autorisé:
                 a, b = element
@@ -136,22 +140,31 @@ class Server:
                 if authorized == True:
                     dico = preview(game, a, b)
                     # print(dico)
-                    if dico['maximum'] > maximum:
-                        maximum = dico['maximum']
+                    cinq_derniers_coups = moves[len(moves)-5 : len(moves)+1]
+                    liste_adversaire = []
+                    liste_joueurs = []
+                    for dictionnaires in cinq_derniers_coups:
+                        if dictionnaires["player"] == adversaire:
+                            liste_adversaire.append(dictionnaires["move"])
+
+                        else:
+                            liste_joueurs.append(dictionnaires["move"])
+
+
+
+
+                    if dico['maximum_player'] > maximum_player and not (dico['maximum_adversaire'] >= 4):
+                        maximum_player = dico['maximum_player']
+                        maximum_adversaire = dico['maximum_adversaire']
                         coup = {"cube": a, "direction": b}
-                        score = dico['score']
-                    elif dico['maximum'] == maximum:
-                        if dico['score'] > score:
-                            score = dico['score']
-                            coup = {"cube": a, "direction": b}
+
+                    elif dico['maximum_player'] == maximum_player and dico['maximum_adversaire'] < maximum_adversaire:
+                        maximum_adversaire = dico['maximum_adversaire']
+                        coup = {"cube": a, "direction": b}
             return coup
 
-        print({"move": move()})
-        return {"move": move(),"message":signe}
-
-
-
-
+        liste_message = ["Salut","Je vais gagner","Ahahahah","LOL","Tu es un bon à rien","Prends ça","Coucouuuuu","Je vais conquérir le monde"]
+        return {"move":move(),"message": random.choice(liste_message)}
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
@@ -161,3 +174,5 @@ if __name__ == "__main__":
 
     cherrypy.config.update({'server.socket_host': '0.0.0.0', 'server.socket_port': port})
     cherrypy.quickstart(Server())
+
+    {move: {…}, player: "Random", gameBefore: Array(25)}
