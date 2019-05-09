@@ -34,19 +34,18 @@ class Server:
             adversaire = 0
 
         def check_move (cube, direction):
-            forbidden_moves = {"cube": [6, 7, 8, 11, 12, 13, 16, 17, 18],
-                               "direction": {"N": [0, 1, 2, 3, 4], "S": [20, 21, 22, 23, 24], "E": [4, 9, 14, 19, 24],
-                                             "W": [0, 5, 10, 15, 20]}}
+            #forbidden_moves = {"cube": [6, 7, 8, 11, 12, 13, 16, 17, 18],
+             #                  "direction": {"N": [0, 1, 2, 3, 4], "S": [20, 21, 22, 23, 24], "E": [4, 9, 14, 19, 24],
+              #                               "W": [0, 5, 10, 15, 20]}}
 
-            if cube in forbidden_moves["cube"]:  #vérifier qu'on déplace bien un cube sur les bords
+            #if cube in forbidden_moves["cube"]:  #vérifier qu'on déplace bien un cube sur les bords
+             #   return False
+
+            if game[cube] == adversaire:
                 return False
 
-            elif game[cube] == adversaire: #vérifier qu'on déplace bien son cube. Le truc c'est que le joueur
-                #qu'on est on le garde jusqu'à la fin... C'est pas optimisé ici. il refait à chaque tour
-                return False
-
-            elif cube in forbidden_moves["direction"][direction]:
-                return False
+            #elif cube in forbidden_moves["direction"][direction]:
+            #    return False
             return True
 
 # ---------------------------------
@@ -139,20 +138,24 @@ class Server:
         def move():
             maximum = 0
             score = 0
-            for a in range(25):
-                for b in ['N', 'S', 'E',  'W']:
-                    authorized = check_move(a,b)
-                    if authorized == True:
-                        dico = preview(game, a, b)
-                        # print(dico)
-                        if dico['maximum'] > maximum:
-                            maximum = dico['maximum']
-                            coup = {"cube": a, "direction": b}
-                            score = dico['score']
-                        elif dico['maximum'] == maximum:
-                            if dico['score'] > score:
-                                score = dico['score']
-                                coup = {"cube": a, "direction": b}
+            liste_coup_possible = [(0, 'S'), (0, 'E'), (1, 'S'), (1, 'E'), (1, 'W'), (2, 'S'), (2, 'E'), (2, 'W'), (3, 'S'), (3, 'E'),
+             (3, 'W'), (4, 'S'), (4, 'W'), (5, 'N'), (5, 'S'), (5, 'E'), (9, 'N'), (9, 'S'), (9, 'W'), (10, 'N'),
+             (10, 'S'), (10, 'E'), (14, 'N'), (14, 'S'), (14, 'W'), (15, 'N'), (15, 'S'), (15, 'E'), (19, 'N'),
+             (19, 'S'), (19, 'W'), (20, 'N'), (20, 'E'), (21, 'N'), (21, 'E'), (21, 'W'), (22, 'N'), (22, 'E'),
+             (22, 'W'), (23, 'N'), (23, 'E'), (23, 'W'), (24, 'N'), (24, 'W')]
+
+            for elements in liste_coup_possible:
+                a,b = elements
+
+                authorized = check_move(a,b)
+                if authorized == True:
+                    dico = preview(game, a, b)
+                    # print(dico)
+                    if dico['maximum'] > maximum:
+                        maximum = dico['maximum']
+                        coup = {"cube": a, "direction": b}
+                        maximum = dico['maximum']
+
             return coup
 
         print({"move": move()})

@@ -16,14 +16,40 @@ class Server:
 
         body = cherrypy.request.json
 
+#Lire les fonctions dans l'ordre suivant
+      #  1) Move
+      #  2) check move()
+      #  3) qui_suis je pas
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     #Informations sur le jeu (déà retirée du dico par facilité)
         game = body["game"]
         moi = body["you"]
         joueurs = body["players"]
 
+        #Informations sur moi et joueurs : le premier de la liste joueurs est le joeur '0" dans la liste de
+        # l'état du jeu : game = body['game']. L'autre est le joueur 1.
+
+
+
 
         def qui_suis_je_pas (): #il ne faut pas jouer les jetons de l'autre... utilisé plus loin
-            if joueurs[0]== moi:
+            if joueurs[0]== moi: #où joueurs est la liste des joueurs et donc si le premier élement de cette liste
+                                    #est moi, alors je ne suis pas le joueur 1. (logique inversée
+                                    #qui au début dans ma manière de réfléchir avait du sens
                 return 1
             return 0
 
