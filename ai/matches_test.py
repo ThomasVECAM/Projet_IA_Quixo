@@ -34,38 +34,31 @@ class Server:
             adversaire = 0
 
         def check_move (cube, direction):
-            #forbidden_moves = {"cube": [6, 7, 8, 11, 12, 13, 16, 17, 18],
-             #                  "direction": {"N": [0, 1, 2, 3, 4], "S": [20, 21, 22, 23, 24], "E": [4, 9, 14, 19, 24],
-              #                               "W": [0, 5, 10, 15, 20]}}
 
-            #if cube in forbidden_moves["cube"]:  #vérifier qu'on déplace bien un cube sur les bords
-             #   return False
-
-            if game[cube] == adversaire:
+            if game[cube] == adversaire: #vérifier qu'on déplace bien son cube. Le truc c'est que le joueur
+                #qu'on est on le garde jusqu'à la fin... C'est pas optimisé ici. il refait à chaque tour
                 return False
 
-            #elif cube in forbidden_moves["direction"][direction]:
-            #    return False
             return True
 
 # ---------------------------------
 
-        def analyse_dico(dictionary): #dictionnaire de type : {"horizontal" : ... , "vertical" ... , "diagonal"
+        def analyse_dico(dictionary): #dictionnaire de type : {"vertical" : ... , "horizontal" ... , "diagonal"
             analytic_dictionary = dict()
             liste_result = []
-            liste_clé = ["vertical","horizontal","diagonale"]
-            for liste in liste_clé:
+            for liste in dictionary:
                 liste_principal = (dictionary[liste])
                 for sous_liste in liste_principal:
-                    tot = 0
+                    tot_player = 0
+                    tot_adversaire = 0
                     for e in sous_liste:
                         if e == player:
-                            tot += 1
-                    liste_result.append(tot)
+                            tot_player += 1
+                    liste_result.append(tot_player)
             maximum = max(liste_result)
             total = sum(liste_result)
 
-            return {"maximum": maximum,"total": total,"score": total*maximum,"move":dictionary["move"]}
+            return {"maximum": maximum,"total": total,"score": total*maximum}
 
         def build_horizontal(liste):
             avancement_liste = 0
@@ -105,10 +98,8 @@ class Server:
                     [game_list[4],game_list[8],game_list[12],game_list[16],game_list[20]]]
 
         def build_dictionnary(liste_a_convertir, cube, direction):
-            dico =  {"vertical": build_vertical(liste_a_convertir), "horizontal": build_horizontal(liste_a_convertir), "diagonale": build_diag(liste_a_convertir),"move":{"cube":cube, "direction":direction}}
+            dico = {"vertical": build_vertical(liste_a_convertir), "horizontal": build_horizontal(liste_a_convertir), "diagonale": build_diag(liste_a_convertir)}
             return analyse_dico(dico)
-            #print(liste_a_convertir)
-            # print(dico)
 
 
         def preview (jeu_list_original, cube, direction):
@@ -138,15 +129,9 @@ class Server:
         def move():
             maximum = 0
             score = 0
-            liste_coup_possible = [(0, 'S'), (0, 'E'), (1, 'S'), (1, 'E'), (1, 'W'), (2, 'S'), (2, 'E'), (2, 'W'), (3, 'S'), (3, 'E'),
-             (3, 'W'), (4, 'S'), (4, 'W'), (5, 'N'), (5, 'S'), (5, 'E'), (9, 'N'), (9, 'S'), (9, 'W'), (10, 'N'),
-             (10, 'S'), (10, 'E'), (14, 'N'), (14, 'S'), (14, 'W'), (15, 'N'), (15, 'S'), (15, 'E'), (19, 'N'),
-             (19, 'S'), (19, 'W'), (20, 'N'), (20, 'E'), (21, 'N'), (21, 'E'), (21, 'W'), (22, 'N'), (22, 'E'),
-             (22, 'W'), (23, 'N'), (23, 'E'), (23, 'W'), (24, 'N'), (24, 'W')]
-
-            for elements in liste_coup_possible:
-                a,b = elements
-
+            liste_coup_autorisé = [(0, 'S'), (0, 'E'), (1, 'S'), (1, 'E'), (1, 'W'), (2, 'S'), (2, 'E'), (2, 'W'), (3, 'S'), (3, 'E'), (3, 'W'), (4, 'S'), (4, 'W'), (5, 'N'), (5, 'S'), (5, 'E'), (9, 'N'), (9, 'S'), (9, 'W'), (10, 'N'), (10, 'S'), (10, 'E'), (14, 'N'), (14, 'S'), (14, 'W'), (15, 'N'), (15, 'S'), (15, 'E'), (19, 'N'), (19, 'S'), (19, 'W'), (20, 'N'), (20, 'E'), (21, 'N'), (21, 'E'), (21, 'W'), (22, 'N'), (22, 'E'), (22, 'W'), (23, 'N'), (23, 'E'), (23, 'W'), (24, 'N'), (24, 'W')]
+            for element in liste_coup_autorisé:
+                a, b = element
                 authorized = check_move(a,b)
                 if authorized == True:
                     dico = preview(game, a, b)
@@ -154,8 +139,11 @@ class Server:
                     if dico['maximum'] > maximum:
                         maximum = dico['maximum']
                         coup = {"cube": a, "direction": b}
-                        maximum = dico['maximum']
-
+                        score = dico['score']
+                    elif dico['maximum'] == maximum:
+                        if dico['score'] > score:
+                            score = dico['score']
+                            coup = {"cube": a, "direction": b}
             return coup
 
         print({"move": move()})

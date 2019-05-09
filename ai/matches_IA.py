@@ -146,14 +146,14 @@ class Server:
                     for dictionnaires in cinq_derniers_coups:
                         if dictionnaires["player"] == adversaire:
                             liste_adversaire.append(dictionnaires["move"])
-                            liste_adversaire_P = all(map(lambda x: x == liste_adversaire[0], liste_adversaire))
+                            bool_adversaire = all(map(lambda x: x == liste_adversaire[0], liste_adversaire))
 
 
                         else:
                             liste_joueurs.append(dictionnaires["move"])
-                            liste_joueurs_P = all(map(lambda x: x == liste_joueurs[0], liste_joueurs))
+                            bool_joueurs = all(map(lambda x: x == liste_joueurs[0], liste_joueurs))
 
-                    if liste_adversaire_P == True and  liste_joueurs_P == True:
+                    if bool_adversaire == True and  bool_joueurs == True:
                         pass
 
 
