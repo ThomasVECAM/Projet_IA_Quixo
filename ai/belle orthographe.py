@@ -5,7 +5,6 @@ class Server:
     @cherrypy.expose
     @cherrypy.tools.json_in()
     @cherrypy.tools.json_out()
-
     def move(self):
         # Deal with CORS
         cherrypy.response.headers['Access-Control-Allow-Origin'] = '*'
@@ -28,7 +27,7 @@ class Server:
             self.player = 1
             self.adversaire = 0
 
-        return {"move":move()}
+        return {"move": self.mouvement()}
 
     def analyse_dico(self, dictionary):
         liste_result_player = []
@@ -86,16 +85,16 @@ class Server:
 
         dico = {"vertical": build_vertical(liste_a_convertir), "horizontal": build_horizontal(liste_a_convertir),
                 "diagonale": build_diag(liste_a_convertir)}
-        return analyse_dico(dico)
+        return self.analyse_dico(dico)
 
     def check_move(self, cube):
-        if game[cube] == adversaire:
+        if self.game[cube] == self.adversaire:
             return False
         return True
 
     def preview(self, jeu_list_original, cube, direction):
         jeu_list = jeu_list_original.copy()
-        jeu_list[cube] = player
+        jeu_list[cube] = self.player
         if direction == "E":
             jeu_list.insert(cube + (4 - (cube % 5)), jeu_list.pop(cube))
         elif direction == "W":
@@ -115,7 +114,7 @@ class Server:
                 elements -= 1
         return jeu_list
 
-    def move(self):
+    def mouvement(self):
         maximum_player = 0
         maximum_adversaire = 5
         liste_coup_autorise = [(0, 'S'), (0, 'E'), (1, 'S'), (1, 'E'), (1, 'W'), (2, 'S'), (2, 'E'), (2, 'W'), (3, 'S'),
@@ -127,7 +126,7 @@ class Server:
         for element in liste_coup_autorise:
             a, b = element
             if self.check_move(a) == True:
-                liste_preview = self.preview(game, a, b)
+                liste_preview = self.preview(self.game, a, b)
                 dico = self.build_dictionnary(liste_preview)
 
                 bool_continue = True
@@ -145,7 +144,7 @@ class Server:
                         else:
                             liste_joueurs.append(dictionnaires["move"])
 
-                    liste_joueurs.append({'cube': cube, 'direction': direction})
+                    liste_joueurs.append({'cube': a, 'direction': b})
 
                     bool_adversaire = all(map(lambda x: x == liste_adversaire[0], liste_adversaire))
                     bool_joueur = all(map(lambda x: x == liste_joueurs[0], liste_joueurs))
@@ -168,11 +167,12 @@ class Server:
 
         return coup
 
+
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        port=int(sys.argv[1])
+        port = int(sys.argv[1])
     else:
-        port=8080
+        port = 8080
 
     cherrypy.config.update({'server.socket_host': '0.0.0.0', 'server.socket_port': port})
     cherrypy.quickstart(Server())
