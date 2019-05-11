@@ -1,15 +1,15 @@
-#Projet IA QUIXO
+# Projet IA QUIXO
 
 Thomas Vandermeersch - 17030  
 Landry Taymans - 17046
 
-##Bibliothèques utilisées :
+## Bibliothèques utilisées :
 
 * cherrypy
 * sys
 * random
 
-##Stratégie de l'IA :
+## Stratégie de l'IA :
 
 Avant de jouer, l'IA analyse tous les coups qui lui sont possible de 
 jouer. Elle choisit ensuite le coup qui lui permet de faire la plus 
