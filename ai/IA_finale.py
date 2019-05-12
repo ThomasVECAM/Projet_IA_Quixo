@@ -1,6 +1,5 @@
 import cherrypy
 import sys
-import time
 
 class Server:
     @cherrypy.expose
@@ -16,7 +15,6 @@ class Server:
             return ''
 
         body = cherrypy.request.json
-        actual_time = time.time()
 
         self.game = body["game"]
         self.me = body["you"]
@@ -31,6 +29,7 @@ class Server:
             self.adversaire = 0       #récupération informations générales du jeu.
 
         mouvement_final = self.mouvement()
+
 
         return {"move": mouvement_final}  #renvoie le mouvement final au serveur.
 
