@@ -1,5 +1,6 @@
 import cherrypy
 import sys
+import random
 
 class Server:
     @cherrypy.expose
@@ -122,6 +123,7 @@ class Server:
         return jeu_list
 
     def mouvement(self):
+        coup = None
         maximum_player = 0
         maximum_adversaire = 5 #on entend par maximum la ligne contenant le plus de cases du joueur.
         liste_coup_autorise = [(0, 'S'), (0, 'E'), (1, 'S'), (1, 'E'), (1, 'W'), (2, 'S'), (2, 'E'), (2, 'W'), (3, 'S'),
@@ -179,6 +181,11 @@ class Server:
                     elif dico['maximum_player'] == maximum_player and dico['maximum_adversaire'] < maximum_adversaire:
                         maximum_adversaire = dico['maximum_adversaire']
                         coup = {"cube": a, "direction": b}          #on ammène toujours l'adversaire au plus bas
+
+                if coup == None:
+                    move = random.choice(liste_coup_autorise)
+                    a,b = move
+                    coup = {"cube": a, "direction": b}
 
         return coup     # le coup qui va être joué
 
