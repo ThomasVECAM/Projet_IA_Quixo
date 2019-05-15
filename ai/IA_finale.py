@@ -185,7 +185,7 @@ class Server:
                 while coup == None:
                     move = random.choice(liste_coup_autorise)
                     a,b = move
-                    if self.check_move(a)==True
+                    if self.check_move(a)==True:
                         coup = {"cube": a, "direction": b}
 
         return coup     # le coup qui va être joué
