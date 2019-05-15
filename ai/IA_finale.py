@@ -182,10 +182,11 @@ class Server:
                         maximum_adversaire = dico['maximum_adversaire']
                         coup = {"cube": a, "direction": b}          #on ammène toujours l'adversaire au plus bas
 
-                if coup == None:
+                while coup == None:
                     move = random.choice(liste_coup_autorise)
                     a,b = move
-                    coup = {"cube": a, "direction": b}
+                    if self.check_move(a)==True
+                        coup = {"cube": a, "direction": b}
 
         return coup     # le coup qui va être joué
 
